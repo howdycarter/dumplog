@@ -1,0 +1,72 @@
+name: DumpLog
+options:
+  deploymentTarget:
+    iOS: '16.0'
+  createIntermediateGroups: true
+  # Ensure generated pbxproj is compatible with your Xcode
+  # Bump to match your installed Xcode version if needed (e.g., '16.0')
+  xcodeVersion: '15.1'
+settings:
+  base:
+    SWIFT_VERSION: 5.9
+    IPHONEOS_DEPLOYMENT_TARGET: 16.0
+targets:
+  DumpLog:
+    type: application
+    platform: iOS
+    dependencies:
+      - package: Supabase
+      - package: TelemetryDeck
+        product: TelemetryClient
+      - package: RevenueCat
+        product: RevenueCat
+    sources:
+      - path: Config
+        excludes:
+          - Secrets.sample.swift
+      - path: Core
+      - path: Modules
+      - path: Features
+      - path: Backend
+        excludes:
+          - "**/*.md"
+          - "**/*.txt"
+          - "**/Python/**"
+      - path: Resources
+        excludes:
+          - Info.plist # handled via info block below
+    info:
+      path: Resources/Info.plist
+      properties:
+        UILaunchStoryboardName: LaunchScreen
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSMicrophoneUsageDescription: DumpLog needs microphone access to record your voice journal entries.
+        NSSpeechRecognitionUsageDescription: DumpLog uses on-device speech recognition to transcribe your recordings privately.
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.howdycarter.dumplog
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0
+    scheme:
+      testTargets:
+        - name: DumpLogTests
+
+  DumpLogTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: DumpLog
+
+packages:
+  Supabase:
+    url: https://github.com/supabase-community/supabase-swift
+    from: 2.0.0
+  TelemetryDeck:
+    url: https://github.com/TelemetryDeck/SwiftSDK
+    from: 1.5.1
+  RevenueCat:
+    url: https://github.com/RevenueCat/purchases-ios
+    from: 5.0.0
